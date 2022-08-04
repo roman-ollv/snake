@@ -15,7 +15,7 @@ def food(board,coordinates):
         food_x = randrange (10)
         food_y = randrange (10)
         print(food_x, food_y)
-        if board[food_x][food_y] == "." :
+        if (food_x, food_y) not in coordinates:
             board[food_x][food_y] = "}"
             return board
 
