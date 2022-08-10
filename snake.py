@@ -1,25 +1,26 @@
 from random import randrange
 
-def create_board(coordinates):
+def create_board(coordinates, food_coordinates):
     board = []
     for _ in range(10):
         board.append(["."]* 10)
     for x, y in coordinates:
-        board[x][y] = "x"         
+        board[x][y] = "x"   
+    for x, y in food_coordinates:
+        board[x][y] = "}"        
     for row in board:
         print(" ".join(row))
     return board  
 
-def food(board,coordinates):
+def food(coordinates, food_coordinates):
     while True:
-        food_x = randrange (10)
-        food_y = randrange (10)
-        print(food_x, food_y)
-        if (food_x, food_y) not in coordinates:
-            board[food_x][food_y] = "}"
-            return board
+        x = randrange(10)
+        y = randrange(10)
+        if (x,y) not in coordinates and (x,y) not in food_coordinates:
+            food_coordinates.append((x,y))
+        break
 
-def movement(board, coordinates, direction, food):
+def movement(board, coordinates,food_coordinates, direction):
     x = coordinates[-1][0]
     y = coordinates[-1][1]
     if direction == "w":
@@ -46,20 +47,22 @@ def movement(board, coordinates, direction, food):
         coordinates.append([x,y])
         tail = coordinates[0]
         if board[x][y] == "}":
-            board = food(board,coordinates)
+            board = food(coordinates, food_coordinates)
+            food_coordinates.remove((x,y))
             return coordinates
-        else:
+        else :
             board[tail[0]][tail[1]] = "."
             coordinates.remove(coordinates[0])
             return coordinates
 
 def game():
     coordinates = [[0,0],[0,1],[0,2]]
-    board = create_board(coordinates)
-    board = food(board, coordinates)
+    food_coordinates = []
+    board = create_board(coordinates, food_coordinates)
+    board = food(coordinates, food_coordinates)
     print(board)
     while True:
-        board = create_board(coordinates)
+        board = create_board(coordinates, food_coordinates)
         direction = input ("Choose thr direction: 'w' = 'west', 'e' = 'east', 's' = 'south', 'n' = 'north' \nTo leave the game type 'end'")
-        move = movement(board,coordinates,direction, food)
+        move = movement(board,coordinates,food_coordinates, direction)
 game()
